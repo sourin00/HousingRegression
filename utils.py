@@ -86,7 +86,7 @@ def evaluate_model(model, X_test, y_test, model_name):
 
     print(f"\n{model_name} Performance:")
     print(f"MSE: {mse:.4f}")
-    print(f"R\u00B2: {r2:.4f}")
+    print(f"R²: {r2:.4f}")
     print(f"RMSE: {np.sqrt(mse):.4f}")
 
     return {
@@ -115,7 +115,7 @@ def plot_predictions(y_test, y_pred, model_name):
 def get_baseline_models():
     """Return dictionary of baseline models"""
     models = {
-        'Linear Regression': LinearRegression(),
+        'Lasso Regression': Lasso(random_state=42),
         'Ridge Regression': Ridge(random_state=42),
         'Random Forest': RandomForestRegressor(random_state=42)
     }
@@ -125,7 +125,11 @@ def get_baseline_models():
 def get_hyperparameter_grids():
     """Return hyperparameter grids for tuning"""
     param_grids = {
-        'Linear Regression': {},  # No hyperparameters for basic linear regression
+        'Lasso Regression': {
+            'alpha': [0.01, 0.1, 1.0, 10.0, 100.0],
+            'max_iter': [1000, 2000, 5000],
+            'selection': ['cyclic', 'random']
+        },
         'Ridge Regression': {
             'alpha': [0.1, 1.0, 10.0, 100.0],
             'solver': ['auto', 'svd', 'cholesky'],
@@ -177,7 +181,7 @@ def save_results_to_file(results, filename):
         for result in results:
             f.write(f"Model: {result['model_name']}\n")
             f.write(f"MSE: {result['mse']:.4f}\n")
-            f.write(f"R\u00B2: {result['r2']:.4f}\n")
+            f.write(f"R²: {result['r2']:.4f}\n")
             f.write(f"RMSE: {result['rmse']:.4f}\n")
             f.write("-" * 30 + "\n")
 
@@ -188,7 +192,7 @@ def compare_models(results):
         {
             'Model': r['model_name'],
             'MSE': r['mse'],
-            'R\u00B2': r['r2'],
+            'R²': r['r2'],
             'RMSE': r['rmse']
         }
         for r in results
